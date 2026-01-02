@@ -133,3 +133,9 @@ button:focus-visible {
   color: #1db954; /* Spotify-like green */
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #111; /* your dark color */
+}

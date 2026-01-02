@@ -67,11 +67,24 @@ function renderSliders() {
   });
 }
 
+function syncNamesFromDOM() {
+  document.querySelectorAll(".name-input").forEach(el => {
+    const index = el.dataset.index;
+    const text = el.textContent.trim();
+
+    session[index].name = text || "Untitled";
+  });
+}
+
+
 
 
 document.getElementById("add-timer").addEventListener("click", () => {
+  syncNamesFromDOM();
+
   session.push({ name: "New Section", minutes: 10 });
   renderSliders();
+
 });
 
 document.addEventListener("input", e => {
