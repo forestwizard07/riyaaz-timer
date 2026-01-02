@@ -45,6 +45,14 @@ h1 {
   padding-bottom: 80px;
 }
 
+#start_riyaaz{
+  background-color: #092e16;
+}
+
+#stop{
+  background-color: rgb(129, 34, 34);
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
