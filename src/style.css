@@ -80,9 +80,14 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+  color: white; /* force text color */
+  background: none;
+  font: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+
 }
 button:hover {
   border-color: #646cff;
@@ -134,7 +139,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background: #1e1e1e; /* your dark color */
+  background: #242424; /* your dark color */
 }
 
 .modal {
