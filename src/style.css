@@ -54,6 +54,10 @@ h1 {
   background-color: rgb(129, 34, 34);
 }
 
+#next-section{
+  background-color: #32350b;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -118,7 +122,7 @@ button:focus-visible {
   justify-content: space-around;
   align-items: center;
 
-  background: #111;
+  background: #1a1a19;
   border-top: 1px solid #222;
 
   z-index: 100;
@@ -141,12 +145,47 @@ button:focus-visible {
 }
 
 .bottom-nav button.active {
-  color: #1db954; /* Spotify-like green */
+  color: #1db954; 
 }
 
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background: #111; /* your dark color */
+  background: #1e1e1e; /* your dark color */
+}
+
+.modal {
+  position: absolute;       /* REQUIRED */
+  left: 50%;                /* REQUIRED */
+  top: 58%;                 /* REQUIRED */
+  transform: translate(-50%, -50%); /* REQUIRED */
+
+  width: 90%;
+  max-width: 320px;
+
+  background: #1c1c1c;
+  border-radius: 12px;
+  padding: 20px;
+
+  text-align: center;
+}
+
+
+.modal-box {
+  position: fixed;
+  inset: 0;
+}
+
+#confirm-stop{
+  background-color: #958902;
+}
+
+#cancel-stop{
+  background-color: ghostwhite;
+  color: #1a1a19;
+}
+
+#done{
+  background-color: #092e16;
 }

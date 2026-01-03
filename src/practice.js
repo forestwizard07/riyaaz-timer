@@ -1,25 +1,28 @@
 
-import { renderConfigureView } from "./main.js";
-
+import { getAppMode, renderConfigureView } from "./main.js";
+import { renderStopConfirmModal } from "./main.js";
+import { setAppMode } from "./main.js";
 let timer = null;
-
+let currIdx = 0;
+let queue = [];
 export function startPractice(session) {
-   clearInterval(timer);
-    const queue = session.map(s => ({
+  setAppMode("PRAC"); 
+  clearInterval(timer);
+    queue = session.map(s => ({
     name: s.name,
     duration: s.minutes * 60
   }));
-
-  runPractice(queue, 0);
+  currIdx = 0;
+  runPractice(queue);
 }
 
-function runPractice(queue, index) {
-  if (index >= queue.length) {
+function runPractice() {
+  if (currIdx >= queue.length) {
     renderComplete();
     return;
   }
 
-  const section = queue[index];
+  const section = queue[currIdx];
   let elapsed = 0;
 
   clearInterval(timer);
@@ -30,8 +33,7 @@ function runPractice(queue, index) {
     renderPracticeView(section, elapsed, section.duration);
 
     if (elapsed >= section.duration) {
-      clearInterval(timer);
-      runPractice(queue, index + 1);
+      nextSection();
     }
   }, 1000);
 }
@@ -102,17 +104,23 @@ function renderPracticeView(section, elapsed, total) {
         </text>
 
       </svg>
-        <br>
+        <br><br><br><br>
+      <button id="next-section">Next Section</button>  
       <button id="stop">Stop</button>
     </div>
   `;
 }
 
+function nextSection(){
+  clearInterval(timer);
+  currIdx++;
+  runPractice();
+}
 
 function renderComplete() {
   document.querySelector("#app").innerHTML = `
     <div class="practice">
-      <h2>Riyaaz Complete 🎶</h2>
+      <h2>Riyaaz Complete!</h2>
       <button id="done">Done</button>
     </div>
   `;
@@ -126,17 +134,24 @@ function formatTime(seconds) {
 
 export function stopPractice() {
   clearInterval(timer);
+  setAppMode("CONFIG");
   renderConfigureView();
 }
 
 document.addEventListener("click", e => {
   if (e.target.id === "stop") {
-    stopPractice();
+    renderStopConfirmModal();
   }
 });
 
 document.addEventListener("click", e => {
   if (e.target.id === "done") {
     stopPractice();
+  }
+});
+
+document.addEventListener("click", e=> {
+  if(e.target.id === "next-section"){
+    nextSection();
   }
 });

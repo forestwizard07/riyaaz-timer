@@ -11,6 +11,8 @@ let session = [
   { name: "Alankaar Practice", minutes: 10 }
 ];
 
+export let appMode = "CONFIG"; 
+
 /* =========================
    2. PURE HELPERS
 ========================= */
@@ -77,6 +79,7 @@ function updateTotalTimeUI() {
 }
 
 export function renderConfigureView() {
+  appMode = "CONFIG";
   document.querySelector("#app").innerHTML = `
     <div>
       <h1>Riyaaz Timer</h1>
@@ -98,6 +101,36 @@ export function renderConfigureView() {
   renderSliders();
   updateTotalTimeUI();
 }
+
+export function renderStopConfirmModal() {
+  const modal = document.createElement("div");
+  modal.id = "stop-modal";
+
+  modal.innerHTML = `
+  
+  <div class="modal-box"></div>
+    <div class="modal">
+      <h3>Stop Practice?</h3>
+      <p>Your progress will be lost!</p>
+
+      <div class="modal-actions">
+        <button id="confirm-stop" class="danger">Stop & Log Riyaaz</button>
+        <button id="cancel-stop">Go Back</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+}
+
+export function setAppMode(mode) {
+  appMode = mode;
+}
+
+export function getAppMode() {
+  return appMode;
+}
+
 
 /* =========================
    4. EVENT HANDLERS
@@ -141,13 +174,36 @@ document.addEventListener("click", e => {
   }
 });
 
+document.addEventListener("click", e => {
+  if (e.target.id === "cancel-stop") {
+    document.getElementById("stop-modal")?.remove();
+  }
+
+  if (e.target.id === "confirm-stop") {
+    document.getElementById("stop-modal")?.remove();
+    stopPractice(); // your existing logic
+    renderConfigureView();
+  }
+});
+
+document.getElementById("home").addEventListener("click", () => {
+  if(appMode==="PRAC"){
+    renderStopConfirmModal();
+  }
+});
+
+document.getElementById("calendar").addEventListener("click", ()=>{
+  if(appMode==="PRAC"){
+    renderStopConfirmModal();
+  }
+  //renderCalendar();
+});
+
+
 /* =========================
    5. INITIAL LOAD
 ========================= */
 
 renderConfigureView();
 
-document.getElementById("home").addEventListener("click", () => {
-  stopPractice();          // stop timer if running
-  renderConfigureView();   // show configure screen
-});
+

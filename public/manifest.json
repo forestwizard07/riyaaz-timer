@@ -1,0 +1,15 @@
+{
+  "name": "Riyaaz Timer",
+  "short_name": "Riyaaz",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1c1c1c",
+  "theme_color": "#1db954",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
