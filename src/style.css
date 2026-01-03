@@ -13,14 +13,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+
 
 body {
   margin: 0;
@@ -99,18 +92,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -145,7 +127,7 @@ button:focus-visible {
 }
 
 .bottom-nav button.active {
-  color: #1db954; 
+  color: #242424; 
 }
 
 html, body {
