@@ -86,6 +86,7 @@ button {
   background: none;
   font: inherit;
   -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
   appearance: none;
 
 }
