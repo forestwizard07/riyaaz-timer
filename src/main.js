@@ -1,17 +1,45 @@
 import './style.css';
 import { startPractice } from './practice.js';
 import { stopPractice } from './practice.js';
+import { renderCalendarView } from './calendar.js';
 
 /* =========================
    1. STATE
 ========================= */
 
-let session = [
+const STORAGE_KEY = 'riyaaz.session';
+
+let session = loadSession() || [
   { name: "Warm Up", minutes: 10 },
   { name: "Alankaar Practice", minutes: 10 }
 ];
 
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+
+    return parsed.map(item => ({
+      name: typeof item.name === 'string' ? item.name : 'Untitled',
+      minutes: Number(item.minutes) || 0
+    }));
+  } catch (err) {
+    return null;
+  }
+}
+
+function saveSession() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+  } catch (err) {
+    /* ignore quota errors */
+  }
+} 
+
 export let appMode = "CONFIG"; 
+let pendingNavigation = null;
 
 /* =========================
    2. PURE HELPERS
@@ -26,7 +54,8 @@ function syncNamesFromDOM() {
     const index = el.dataset.index;
     session[index].name = el.textContent.trim() || "Untitled";
   });
-}
+  saveSession();
+} 
 
 /* =========================
    3. RENDER FUNCTIONS
@@ -80,6 +109,7 @@ function updateTotalTimeUI() {
 
 export function renderConfigureView() {
   appMode = "CONFIG";
+  updateNavActive(appMode);
   document.querySelector("#app").innerHTML = `
     <div>
       <h1>Riyaaz Timer</h1>
@@ -131,6 +161,26 @@ export function getAppMode() {
   return appMode;
 }
 
+export function updateNavActive(view) {
+  document
+    .querySelectorAll(".bottom-nav button")
+    .forEach(btn => btn.classList.remove("active"));
+
+  if (view === "CONFIG") {
+    document.getElementById("home").classList.add("active");
+  }
+
+
+  if (view === "CAL") {
+    document.getElementById("calendar").classList.add("active");
+  }
+
+  if (view === "SET") {
+    document.getElementById("settings").classList.add("active");
+  }
+}
+
+
 
 /* =========================
    4. EVENT HANDLERS
@@ -146,6 +196,13 @@ document.addEventListener("input", e => {
       .textContent = e.target.value;
 
     updateTotalTimeUI();
+    saveSession();
+  }
+
+  if (e.target.classList.contains("name-input")) {
+    const index = e.target.dataset.index;
+    session[index].name = e.target.textContent.trim() || "Untitled";
+    saveSession();
   }
 });
 
@@ -155,6 +212,7 @@ document.addEventListener("click", e => {
     session.splice(e.target.dataset.index, 1);
     renderSliders();
     updateTotalTimeUI();
+    saveSession();
   }
 
   if (e.target.id === "add-timer") {
@@ -162,42 +220,68 @@ document.addEventListener("click", e => {
     session.push({ name: "New Section", minutes: 10 });
     renderSliders();
     updateTotalTimeUI();
+    saveSession();
   }
 
   if (e.target.id === "start_riyaaz") {
     syncNamesFromDOM();
     startPractice(session);
   }
-
-  if (e.target.id === "home") {
-    stopPractice();
-  }
 });
 
 document.addEventListener("click", e => {
   if (e.target.id === "cancel-stop") {
     document.getElementById("stop-modal")?.remove();
+    pendingNavigation = null;
+    setAppMode("PRAC");
   }
 
   if (e.target.id === "confirm-stop") {
     document.getElementById("stop-modal")?.remove();
-    stopPractice(); // your existing logic
-    renderConfigureView();
+    // actually stop and then navigate to the pending destination
+    stopPractice();
+
+    if (pendingNavigation === "CONFIG") {
+      setAppMode("CONFIG");
+      updateNavActive("CONFIG");
+      renderConfigureView();
+    } else if (pendingNavigation === "CAL") {
+      setAppMode("CAL");
+      updateNavActive("CAL");
+      renderCalendarView();
+    } else {
+      // fallback
+      setAppMode("CONFIG");
+      updateNavActive("CONFIG");
+      renderConfigureView();
+    }
+
+    pendingNavigation = null;
   }
 });
 
 document.getElementById("home").addEventListener("click", () => {
-  if(appMode==="PRAC"){
+  if (appMode === "PRAC") {
+    pendingNavigation = "CONFIG";
     renderStopConfirmModal();
+  } else {
+    setAppMode("CONFIG");
+    updateNavActive("CONFIG");
+    renderConfigureView();
   }
 });
 
 document.getElementById("calendar").addEventListener("click", ()=>{
-  if(appMode==="PRAC"){
+  if (appMode === "PRAC") {
+    pendingNavigation = "CAL";
     renderStopConfirmModal();
+  } else {
+    setAppMode("CAL");
+    updateNavActive("CAL");
+    renderCalendarView();
   }
-  //renderCalendar();
 });
+
 
 
 /* =========================

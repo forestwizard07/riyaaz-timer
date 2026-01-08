@@ -13,6 +13,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 
 
 body {
@@ -23,6 +29,8 @@ body {
   min-height: 100vh;
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
+  flex-direction: column;
+  min-height: 100dvh;
 }
 
 h1 {
@@ -31,12 +39,26 @@ h1 {
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   padding: 2rem;
+  box-sizing: border-box;
   text-align: center;
   padding-bottom: 80px;
   color: whitesmoke;
+  flex: 1; 
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* constrain the width of the main content so it centers nicely */
+#app > div {
+  width: min(720px, 95%);
+  margin: 0 auto;
 }
 
 #start_riyaaz{
@@ -66,7 +88,12 @@ h1 {
 
 .home_table {
   padding: 2em;
+  margin: 0 auto; /* center horizontally */
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  width: 100%;
+  max-width: 560px;
 }
 
 .read-the-docs {
@@ -109,6 +136,9 @@ button {
   border-top: 1px solid #222;
 
   z-index: 100;
+  flex-shrink: 0;
+  padding: 10px;
+
 }
 
 .bottom-nav button {
@@ -128,14 +158,21 @@ button {
 }
 
 .bottom-nav button.active {
-  color: #242424; 
+  color: #f8f8f8; 
+  background-color: #444444;
+}
+
+.bottom-nav button.active .icon {
+  transform: scale(1.1);
 }
 
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  width: 100%;
   background: #242424; /* your dark color */
+  overflow: hidden; /* remove scrollbars */
 }
 
 .modal {
@@ -161,14 +198,146 @@ html, body {
 }
 
 #confirm-stop{
-  background-color: #958902;
+  background-color: #0162c8;
 }
 
 #cancel-stop{
-  background-color: ghostwhite;
-  color: #1a1a19;
+  background-color: rgb(154, 24, 24);
+  color: #ffffff;
+}
+
+#cancel-clear{
+  background-color: #0162c8;
+}
+
+#confirm-clear{
+  background-color: rgb(154, 24, 24);
+  color: #ffffff;
 }
 
 #done{
   background-color: #092e16;
+}
+
+.practice-container{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px - env(safe-area-inset-bottom));
+  padding-bottom: 120px; /* space for time chip and bottom nav */
+}
+
+.time-elapsed {
+  color: #1db954;
+  position: fixed; /* Fixes element relative to viewport */
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(64px + 12px + env(safe-area-inset-bottom)); /* sits just above the bottom nav */
+  z-index: 200;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.25);
+  font-weight: 600;
+}
+
+.calendar-view {
+  padding: 16px;
+}
+
+.month-title {
+  text-align: center;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+/* Weekday labels */
+.weekday {
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  padding-bottom: 4px;
+}
+
+/* Calendar cells */
+.calendar-cell {
+  background: #1f1f1f;
+  border-radius: 10px;
+  padding: 6px;
+  min-height: 60px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Empty cells (before month starts) */
+.calendar-cell.empty {
+  background: transparent;
+}
+
+/* Date number */
+.calendar-cell .date {
+  font-size: 13px;
+  color: #bbb;
+}
+
+/* Practice minutes */
+.calendar-cell .minutes {
+  font-size: 11px;
+  font-weight: 500;
+  color: #1db954;
+}
+
+/* Highlight days with practice */
+.calendar-cell.active {
+  border: 1px solid rgba(29, 185, 84, 0.4);
+  background: rgba(29, 185, 84, 0.08);
+}
+
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calendar-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.calendar-header button {
+  font-size: 20px;
+  background: none;
+  border: none;
+  color: #aaa;
+  padding: 6px 10px;
+}
+
+.calendar-header button:active {
+  color: #1db954;
+}
+
+/* Footer chip showing count of practiced days */
+.calendar-footer {
+  color: #1db954;
+  position: fixed; /* Fixes element relative to viewport */
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(64px + 12px + env(safe-area-inset-bottom)); /* sits just above the bottom nav */
+  z-index: 200;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.25);
+  font-weight: 600;
 }

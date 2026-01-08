@@ -2,11 +2,17 @@
 import { getAppMode, renderConfigureView } from "./main.js";
 import { renderStopConfirmModal } from "./main.js";
 import { setAppMode } from "./main.js";
+import { updateNavActive } from "./main.js"
+import { addPracticeMinutes } from "./calendarStore.js";
+
+
 let timer = null;
 let currIdx = 0;
 let queue = [];
+let globalTime = 0;
 export function startPractice(session) {
-  setAppMode("PRAC"); 
+  setAppMode("PRAC");
+  updateNavActive("PRAC"); 
   clearInterval(timer);
     queue = session.map(s => ({
     name: s.name,
@@ -30,6 +36,7 @@ function runPractice() {
 
   timer = setInterval(() => {
     elapsed++;
+    globalTime++;
     renderPracticeView(section, elapsed, section.duration);
 
     if (elapsed >= section.duration) {
@@ -50,7 +57,7 @@ function renderPracticeView(section, elapsed, total) {
   const timeText = `${mins}:${secs.toString().padStart(2, "0")}`;
 
   document.querySelector("#app").innerHTML = `
-    <div class="practice">
+    <div class="practice-container">
 
       <svg width="220" height="220" class="circle-timer">
 
@@ -104,9 +111,11 @@ function renderPracticeView(section, elapsed, total) {
         </text>
 
       </svg>
-        <br><br><br><br>
-      <button id="next-section">Next Section</button>  
+        <br><br>
+      <button id="next-section">Next Section</button><br>
       <button id="stop">Stop</button>
+      <br><br>
+      <div class="time-elapsed">Total time elapsed: ${Math.floor(globalTime/60)} min</div>
     </div>
   `;
 }
@@ -134,9 +143,18 @@ function formatTime(seconds) {
 
 export function stopPractice() {
   clearInterval(timer);
-  setAppMode("CONFIG");
-  renderConfigureView();
+  onPracticeComplete();
+  globalTime=0;
 }
+
+function onPracticeComplete() {
+  // convert total elapsed seconds to whole minutes before saving
+  const minutes = Math.floor(globalTime / 60);
+  if (minutes > 0) {
+    addPracticeMinutes(minutes);
+  }
+}
+
 
 document.addEventListener("click", e => {
   if (e.target.id === "stop") {
@@ -147,6 +165,9 @@ document.addEventListener("click", e => {
 document.addEventListener("click", e => {
   if (e.target.id === "done") {
     stopPractice();
+    setAppMode("CONFIG");
+    updateNavActive("CONFIG");
+    renderConfigureView();
   }
 });
 
